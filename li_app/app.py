@@ -1,11 +1,13 @@
-#import streamlit as st
+import streamlit as st
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 import boto3
 from datetime import datetime
-#st.title('LinkedIn Job Postings for Data Science')
+st.title('LinkedIn Job Postings for Data Science')
 
+@st.cache
 def load_unstructured(date):
     db = boto3.resource('dynamodb')
     table = db.Table('LinkedInDSJobs')
@@ -30,12 +32,17 @@ def load_unstructured(date):
         dbTable=table,
         Select='SPECIFIC_ATTRIBUTES',
         AttributesToGet=[
-            'job_id','date','title'
+            'job_id','date','title','company'
         ])
     return data
 
 data = load_unstructured(datetime.today())
 df = pd.DataFrame(data)    
 df['date'] = pd.to_datetime(df.date)
-print(df.groupby('date').size())
 
+fig,ax = plt.subplots()
+df.groupby('date').size().plot(ax=ax)
+plt.ylabel('Number of jobs posted')
+plt.xlabel('Date')
+st.pyplot(fig)
+st.dataframe(df)
