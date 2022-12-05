@@ -1,48 +1,29 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+
+import io as io
+import preprocess as pp
 
 import boto3
 from datetime import datetime
 st.title('LinkedIn Job Postings for Data Science')
 
-@st.cache
-def load_unstructured(date):
-    db = boto3.resource('dynamodb')
-    table = db.Table('LinkedInDSJobs')
+loader = io.DynamoDBLoader(
+    table = 'LinkedInDSJobs',
+    attributes = ['job_id','date','title']
+)
+raw_data = loader.get(datetime.today())
 
-    def scanRecursive(dbTable, **kwargs):
-        """
-        NOTE: Anytime you are filtering by a specific equivalency attribute such as id, name 
-        or date equal to ... etc., you should consider using a query not scan
+# Prepare raw job postings for DS applications
+preprocessor = pp.StandardPreprocessor()
+data = preprocessor.fit_transform(data)
 
-        kwargs are any parameters you want to pass to the scan operation
-        """
-        response = dbTable.scan(**kwargs)
-        if kwargs.get('Select')=="COUNT":
-            return response.get('Count')
-        data = response.get('Items')
-        while 'LastEvaluatedKey' in response:
-            response = kwargs.get('table').scan(ExclusiveStartKey=response['LastEvaluatedKey'], **kwargs)
-            data.extend(response['Items'])
-        return data
 
-    data = scanRecursive(
-        dbTable=table,
-        Select='SPECIFIC_ATTRIBUTES',
-        AttributesToGet=[
-            'job_id','date','title','company'
-        ])
-    return data
-
-data = load_unstructured(datetime.today())
-df = pd.DataFrame(data)    
-df['date'] = pd.to_datetime(df.date)
-
+## Divide plots into pages
 fig,ax = plt.subplots()
-df.groupby('date').size().plot(ax=ax)
-plt.ylabel('Number of jobs posted')
-plt.xlabel('Date')
+data.groupby('date').size().plot(ax=ax)
+plt.xlabel('Number of jobs posted')
+plt.ylabel('Date')
 st.pyplot(fig)
-st.dataframe(df)
+

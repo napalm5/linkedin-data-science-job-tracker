@@ -1,19 +1,15 @@
-from abc import ABC, abstractmethod
+from ingestion.base import LoadUnstructured
 
 import boto3
 import streamlit as st
 
-class LoadUnstructured(ABC):
-    @abstractmethod
-    def get(self):
-        pass
-
-
 class DynamoDBLoader(LoadUnstructured):
     '''
     Fetches table from DynamoDB using Boto.
+    
     Needs to have authentication set up through env variables:
     AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY 
+    Reading credientials from file of from variable is not implemented due to security reasons
     '''
     def __init__(
         self,
@@ -33,7 +29,7 @@ class DynamoDBLoader(LoadUnstructured):
             # I'm using default value for Select option
             # I could extend the interface by passing kwargs to scanRecursive, 
             # but atm it would introduce unnecessary complexity in the interface 
-            
+
         data_df = pd.DataFrame(data) # This will give error if structure is not consistent    
         return data_df
         
