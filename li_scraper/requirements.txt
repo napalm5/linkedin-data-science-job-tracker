@@ -1,0 +1,7 @@
+boto3==1.24.94
+linkedin_jobs_scraper==1.15.
+wheel
+selenium==3.141.0
+websocket-client==0.58.0
+requests
+awslambdaric

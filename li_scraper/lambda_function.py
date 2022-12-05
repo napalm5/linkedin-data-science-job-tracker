@@ -3,53 +3,18 @@ from linkedin_jobs_scraper import LinkedinScraper
 from linkedin_jobs_scraper.events import Events, EventData, EventMetrics
 from linkedin_jobs_scraper.query import Query, QueryOptions, QueryFilters
 from linkedin_jobs_scraper.filters import RelevanceFilters, TimeFilters, TypeFilters, ExperienceLevelFilters, RemoteFilters
-#import handlers as h
+from scrape import handlers as h
+import export as io
 
 from datetime import datetime
 
-import boto3
 import json
 import os
 import sys
 
-#LI_AT_COOKIE="AQEDASSauyICe5R9AAABg5z5DJMAAAGE4dw_nE0AV_A__Y853wtXZ2NmdgcaamBvPfvmX4G1DVj69UG3aHM1FbEyoBecWAlcV5dXAVm2zXuSfYUkxUozmCeHAaPTHd0QsK5U3PMyujgc5_M5cHVtTnpW"
+# In local, secrets are also written in  ./.secret
 
-# Bad use of global variables, need to find a way to catch output from on_data()
-all_jobs = []
-
-
-def event_to_dict(data_event):
-    '''
-    Exctract relevant information from the whole job posting.
-    This could be either turned into a class, or merged into the linkedin-scraper package
-    '''
-    fields = ['job_id','date','title','company','location']
-    data = {field : getattr(data_event,field) for field in fields}
-    if data['date'] == '': 
-        #data['date'] = datetime.today().strftime('%Y-%m-%d')
-        print('Date missing!')
-    data['year'] = datetime.today().year
-    data['month'] = datetime.today().month  
-
-    return data
-
-def on_data(data: EventData):
-    # Fired once for each successfully processed job
-    print('[ON_DATA]', data.title, data.company, data.date)
-    all_jobs.append(event_to_dict(data))
-
-def on_metrics(metrics: EventMetrics):
-    # Fired once for each page (25 jobs)
-    print('[ON_METRICS]', str(metrics))
-
-def on_error(error):
-    print('[ON_ERROR]', error)
-
-def on_end():
-    print('[ON_END]')
-
-
-def lambda_handler(event,context):
+def lambda_handler(event,context):#event):#,context):
     # Change root logger level (default is WARN)
     logging.basicConfig(level = logging.INFO)
 
@@ -63,22 +28,27 @@ def lambda_handler(event,context):
         page_load_timeout=20  # Page load timeout (in seconds)    
     )
 
-    scraper.on(Events.DATA, on_data)
-    scraper.on(Events.ERROR, on_error)
-    scraper.on(Events.END, on_end)
+    scraper.on(Events.DATA, h.on_data)
+    scraper.on(Events.ERROR, h.on_error)
+    scraper.on(Events.END, h.on_end)
 
     queries = [
         Query(
             query='Data Science',
             options=QueryOptions(
-                locations=['Italy'],            
+                locations=['Italy','Germany','Austria','Switzerland','France','UK'],            
                 apply_link = False,  # Try to extract apply link (easy applies are skipped). Default to False.
-                limit=5,
+                limit=1000000, #A limitation could cause huge biases in the analysis
                 filters=QueryFilters(
                     relevance=RelevanceFilters.RECENT,
                     time=TimeFilters.DAY,
                     type=[TypeFilters.FULL_TIME],
-                    experience=None,                
+                    experience=[
+                        ExperienceLevelFilters.ENTRY_LEVEL,
+                        ExperienceLevelFilters.ASSOCIATE,
+                        ExperienceLevelFilters.MID_SENIOR,
+                        ExperienceLevelFilters.DIRECTOR
+                        ],                
                 )
             )
         ),
@@ -86,19 +56,12 @@ def lambda_handler(event,context):
 
     scraper.run(queries)
 
-    # Boto should get his credentials from the env variables:
-    # AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY 
-    db = boto3.resource('dynamodb')
-    table = db.Table('LinkedInDSJobs')
-
-    with table.batch_writer() as batch:
-        for job_data in all_jobs:
-            batch.put_item(
-                Item=job_data
-                )
-
-    #table.put_item(Item=job_data)
+    # Write results to DynamoDB
+    outputter = io.DynamoDBExport(table='LinkedInDSJobs')
+    outputter.put(h.all_jobs)
+    
     return {
         'statusCode' : 200,
-        'body' : json.dumps(f'Successfully scraped {len(all_jobs)} jobs')
+        'body' : json.dumps(f'Successfully scraped {len(h.all_jobs)} jobs')
+
     }

@@ -1,9 +1,6 @@
-from abc import ABC, abstractmethod
+from export.base import ExportResults
 
-class ExportResults(ABC):
-    @abstractmethod
-    def put(self):
-        pass
+import boto3
 
 
 class DynamoDBExport(ExportResults):
@@ -12,9 +9,9 @@ class DynamoDBExport(ExportResults):
         table: str
         ):
         self.db = boto3.resource('dynamodb')
-        self.table = db.Table(table)
+        self.table = self.db.Table(table)
 
-    def put(data: list):
+    def put(self, data: list):
         with self.table.batch_writer() as batch:
             for data_point in data:
                 batch.put_item(
