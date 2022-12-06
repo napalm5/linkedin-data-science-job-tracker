@@ -1,5 +1,8 @@
+import pandas as pd
 from ingestion.base import LoadUnstructured
 
+import _thread
+import ssl
 import boto3
 import streamlit as st
 
@@ -17,15 +20,15 @@ class DynamoDBLoader(LoadUnstructured):
         attributes: list
     ):
         self.db = boto3.resource('dynamodb')
-        self.table = db.Table('LinkedInDSJobs')
+        self.table = self.db.Table('LinkedInDSJobs')
         self.attributes = attributes #['job_id','date','title']
 
-    @st.cache
-    def get(self, date):
+    #@st.cache(hash_funcs={ssl.SSLContext: lambda _: None, _thread.RLock: lambda _: None})
+    def get(self, date: str):
         data = self.scanRecursive(
-            dbTable=table,
+            dbTable=self.table,
             Select='SPECIFIC_ATTRIBUTES',
-            AttributesToGet=attributes) 
+            AttributesToGet=self.attributes) 
             # I'm using default value for Select option
             # I could extend the interface by passing kwargs to scanRecursive, 
             # but atm it would introduce unnecessary complexity in the interface 

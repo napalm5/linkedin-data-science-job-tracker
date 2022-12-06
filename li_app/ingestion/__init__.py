@@ -1,1 +1,2 @@
-from load import *
+from .base import *
+from .dynamodb import *

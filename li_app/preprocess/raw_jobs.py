@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+import pandas as pd
+
 class PreprocessJobs(ABC):
     @abstractmethod
     def fit(self, data: pd.DataFrame):
@@ -17,18 +19,25 @@ class PreprocessJobs(ABC):
 
 class StandardPreprocessor(PreprocessJobs):
     def __init__(self):
+        self.countries = ['Italy', 'Germany'] #which countries to consider
         pass
 
     def fit(self, raw_data):
         pass
         
     def transform(self, raw_data):
-        # Format dates
         data = raw_data
+
+        # Only keep countries of interest
+        data = data[data.location.isin(self.countries)]
+        # Format dates
         data['date'] = pd.to_datetime(data.date)
-        data['date'] = data.date\
-            .fillna(method='ffill')\
-            .fillna(method='bfill')
+
+        #Many jobs do not have a date, but since they are scraped in chronological order this is a good approximation 
+        #data['date'] = data.date\
+        #    .fillna(method='ffill')\
+        #    .fillna(method='bfill')
+        data = data.dropna()
 
         return data
 
