@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-import io as io
+import ingestion as io
 import preprocess as pp
 
 import boto3
