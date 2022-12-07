@@ -4,5 +4,3 @@ class LoadUnstructured(ABC):
     @abstractmethod
     def get(self):
         pass
-
-

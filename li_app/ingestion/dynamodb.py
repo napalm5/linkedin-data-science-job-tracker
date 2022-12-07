@@ -1,8 +1,8 @@
 import pandas as pd
+
 from ingestion.base import LoadUnstructured
 
-import _thread
-import ssl
+from datetime import datetime
 import boto3
 import streamlit as st
 
@@ -24,7 +24,7 @@ class DynamoDBLoader(LoadUnstructured):
         self.attributes = attributes #['job_id','date','title']
 
     #@st.cache(hash_funcs={ssl.SSLContext: lambda _: None, _thread.RLock: lambda _: None})
-    def get(self, date: str):
+    def get(self):
         data = self.scanRecursive(
             dbTable=self.table,
             Select='SPECIFIC_ATTRIBUTES',
