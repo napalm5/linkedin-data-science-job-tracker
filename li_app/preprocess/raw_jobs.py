@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+import streamlit as st
+
 import pandas as pd
 
 class PreprocessJobs(ABC):
@@ -17,9 +19,25 @@ class PreprocessJobs(ABC):
 
         return data
 
+
+@st.cache
+def pp_caching_wrapper(raw_data,method='default'):
+    '''
+    Wrapper method to allow for the caching of class methods.
+    This should probably be achieved through some sort of factory method,
+    because this is not easily extensible to multiple PP methods.
+    '''
+    preprocessor = StandardPreprocessor()
+    data = preprocessor.fit_transform(raw_data)
+
+    return raw_data
+
+
+
+
 class StandardPreprocessor(PreprocessJobs):
     def __init__(self):
-        self.countries = ['Italy', 'Germany'] #which countries to consider
+        self.countries = ['Italy', 'DACH', 'Germany', 'Austria', 'Switzerland'] #which countries to consider
         pass
 
     def fit(self, raw_data):
@@ -33,10 +51,11 @@ class StandardPreprocessor(PreprocessJobs):
         # Format dates
         data['date'] = pd.to_datetime(data.date)
 
-        #Many jobs do not have a date, but since they are scraped in chronological order this is a good approximation 
-        #data['date'] = data.date\
-        #    .fillna(method='ffill')\
-        #    .fillna(method='bfill')
+        # Many jobs do not have a date, but since they are scraped in chronological order this is a good approximation 
+        # data['date'] = data.date\
+        #     .fillna(method='ffill')\
+        #     .fillna(method='bfill')
+        # But in the end analysis is better if I drop NAs
         data = data.dropna()
 
         return data
