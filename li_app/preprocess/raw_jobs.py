@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 import streamlit as st
 
+import numpy as np
 import pandas as pd
 
 class PreprocessJobs(ABC):
@@ -30,7 +31,7 @@ def pp_caching_wrapper(raw_data,method='default'):
     preprocessor = StandardPreprocessor()
     data = preprocessor.fit_transform(raw_data)
 
-    return raw_data
+    return data
 
 
 
@@ -38,13 +39,15 @@ def pp_caching_wrapper(raw_data,method='default'):
 class StandardPreprocessor(PreprocessJobs):
     def __init__(self):
         self.countries = ['Italy', 'DACH', 'Germany', 'Austria', 'Switzerland'] #which countries to consider
-        pass
 
     def fit(self, raw_data):
         pass
         
     def transform(self, raw_data):
         data = raw_data
+
+        # Adapt format from DynamoDB output
+        data = data.replace({'' : np.nan})
 
         # Only keep countries of interest
         data = data[data.location.isin(self.countries)]

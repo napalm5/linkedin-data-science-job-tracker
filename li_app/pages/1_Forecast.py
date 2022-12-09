@@ -11,14 +11,37 @@ st.write(
     the volume of the job market in the next week."""
 )
 
-raw_data = st.session_state['raw_data']
-data = st.session_state['data'] 
+ts = st.session_state['ts'] 
+forecast_results = st.session_state['forecast_results'] 
 
+# TODO: put this in a function or in class of functions
+#column names from statsforecast change depending on the model
+forecast = forecast_results.forecast.set_index('ds')
+forecast_column = [c for c in forecast.columns if \
+    'hi-' not in c and \
+    'lo-' not in c and \
+    c not in ['unique_id','ds','y']\
+    ][0]
+forecast_highthresh_column = [c for c in forecast.columns if 'hi-' in c][0]
+forecast_lowthresh_column = [c for c in forecast.columns if 'lo-' in c][0]
 
 fig,ax = plt.subplots()
-data.groupby('date').size().plot(ax=ax)
-plt.xlabel('Number of jobs posted')
-plt.ylabel('Date')
+
+ax.scatter(ts.index,ts.values) # Main time series
+ax.plot(ts.index, ts.values, linewidth=0.2,linestyle='-')# Interpolation
+ax.scatter(
+    forecast.index,
+    forecast[forecast_column]
+) # Forecast
+# ax.fill_between(
+#     x = forecast.index,
+#     y1 = forecast[forecast_lowthresh_column],
+#     y2 = forecast[forecast_highthresh_column],
+#     alpha=0.5
+# )
+
+plt.ylabel('Number of jobs posted')
+plt.xlabel('Date')
 st.pyplot(fig)
 
 

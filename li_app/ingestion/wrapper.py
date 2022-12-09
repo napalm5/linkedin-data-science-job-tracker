@@ -5,7 +5,10 @@ from ingestion.dynamodb import DynamoDBLoader
 from datetime import datetime
 
 @st.cache
-def loader_caching_wrapper(date: str,source='dynamodb'):
+def loader_caching_wrapper(
+    date: str,
+    attributes: list = ['job_id','date','title','location','company'],
+    source='dynamodb'):
     '''
     Wrapper method to allow for the caching of class methods.
     This should probably be achieved through some sort of factory method,
@@ -16,7 +19,7 @@ def loader_caching_wrapper(date: str,source='dynamodb'):
     '''
     loader = DynamoDBLoader(
         table = 'LinkedInDSJobs',
-        attributes = ['job_id','date','title','location']
+        attributes = attributes
     )
     raw_data = loader.get()
     return raw_data
