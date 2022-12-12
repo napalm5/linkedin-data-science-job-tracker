@@ -26,7 +26,6 @@ forecast_highthresh_column = [c for c in forecast.columns if 'hi-' in c][0]
 forecast_lowthresh_column = [c for c in forecast.columns if 'lo-' in c][0]
 
 fig,ax = plt.subplots()
-
 ax.scatter(ts.index,ts.values) # Main time series
 ax.plot(ts.index, ts.values, linewidth=0.2,linestyle='-')# Interpolation
 ax.scatter(
@@ -39,7 +38,7 @@ ax.scatter(
 #     y2 = forecast[forecast_highthresh_column],
 #     alpha=0.5
 # )
-
+plt.xticks(rotation=45)
 plt.ylabel('Number of jobs posted')
 plt.xlabel('Date')
 st.pyplot(fig)

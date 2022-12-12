@@ -34,14 +34,16 @@ st.sidebar.markdown("# Introduction")
 
 st.markdown(
     """
-    Hi! This is an application to monitor the latest trands in the data science job market, for a profile similar to mine.
+    Hi! This is an application to monitor the latest trands in the data science job market, for profiles similar to mine.
 
-    This is a plot of the number of job offers posted every day for the past few weeks.
+    Here you can see a plot of the number of job offers posted every day for the past few weeks.
     An anomaly detection algorithm runs in the backend and raises an alarm whenever the number of job offers starts to spike. The anomalies are marked by a vertical red line on the plot.
 
-    It also sends me an e-mail when there such events happen, so be sure to reach out to me before the next peak! 😉  
+    Be sure to reach out to me before the next peak! 😉  
 
-    This project has just started and it's a work in progress, so be sure to come back in a couple of weeks to see a complete analysis.   
+    Please be aware that this project has just started and it's a work in progress, so be sure to come back in a couple of weeks to see a better analysis. 
+    
+    In particular, I am currently fixing some issues in the scraping process, so the time series you are seeing are at the moment might not be reliable. 
 
     """
 )

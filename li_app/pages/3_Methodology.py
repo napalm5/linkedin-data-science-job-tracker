@@ -50,5 +50,13 @@ In fact, I am using the same model, but for this analysis I perform an out-of-sa
 
 
 ### 3) What kind of opportunities are we talking about?
-WIP
+Lastly, I want to summarize the content of the job postings.
+I do so with a three-steps process:
+
+1. I compute the corpus-wide frequency for every word in the corpus and the TF-IDF matrix. I then display all the words over a give threshold frequency with a word-cloud
+2. I use the TF-IDF matrix as a feature matrix to divide the job postings into group.
+   This works well, because the euclidean distance between two TF-IDF vectors is proportional to the number of "useful" words they have in common. So we can expect that every cluster will contains job postings with similar roles
+   Before clustering, I use the PCA dimensionality reduction algorithm to reduce the number of features to 10, and after clustering I apply another round of PCA to visualize the job postings as 2-D vectors.
+3. I then recreate the cloud of words inside each cluster. If the clustering was effective, this time the job titles will be more homogenous inside each cluster, leading to a more significative word cloud.
+
 '''
