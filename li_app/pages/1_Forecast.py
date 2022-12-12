@@ -6,10 +6,15 @@ st.set_page_config(page_title="Forecast", page_icon="📈")
 
 st.markdown("# Forecast")
 st.sidebar.header("Forecast")
-st.write(
-    """From the data presented in the introduction, I here try to predict 
-    the volume of the job market in the next week."""
-)
+'''
+From the data presented in the introduction, I here try to predict the volume of the job market in the next week.
+
+Please be aware that, being this a work in progress, the dataset is not yet reliable enough for this analysis. 
+At the moment this plot serves the only purpose of testing the pipeline.
+    
+    
+'''
+
 
 ts = st.session_state['ts'] 
 forecast_results = st.session_state['forecast_results'] 
