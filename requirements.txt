@@ -5,3 +5,4 @@ pandas==1.5.1
 scikit_learn==1.2.0
 statsforecast==1.4.0
 streamlit==1.15.2
+wordcloud==1.8.2.2
