@@ -1,4 +1,4 @@
-# Analysis for Data Science Job Postings 
+# Analysis of Data Science job postings 
 
 This projects contains a complete pipeline to scrape data from LinkedIn, analyze it in order to obtain insight into the current trends in the Data Science job market, and display the result on a web interface, accessible here: [https://linkedin-jobs.streamlit.app](https://linkedin-jobs.streamlit.app).
 
