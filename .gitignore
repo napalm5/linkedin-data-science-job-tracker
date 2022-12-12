@@ -1,0 +1,5 @@
+*__pycache__*
+li_scraper/serverless.yml
+li_scraper/.secret
+li_scraper/lambda_function_old.py
+li_scraper/push_docker.sh
