@@ -52,6 +52,7 @@ class DynamoDBLoader(LoadUnstructured):
             return response.get('Count')
         data = response.get('Items')
         while 'LastEvaluatedKey' in response:
-            response = kwargs.get('table').scan(ExclusiveStartKey=response['LastEvaluatedKey'], **kwargs)
+            response = dbTable.scan(ExclusiveStartKey=response['LastEvaluatedKey'], **kwargs)
+            #response = kwargs.get('table').scan(ExclusiveStartKey=response['LastEvaluatedKey'], **kwargs)
             data.extend(response['Items'])
         return data

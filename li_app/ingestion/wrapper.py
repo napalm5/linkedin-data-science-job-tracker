@@ -7,7 +7,7 @@ from datetime import datetime
 @st.cache
 def loader_caching_wrapper(
     date: str,
-    attributes: list = ['job_id','date','title','location','company'],
+    attributes: list = ['job_id','date','title','location','company'], #,'description'],
     source='dynamodb'):
     '''
     Wrapper method to allow for the caching of class methods.
