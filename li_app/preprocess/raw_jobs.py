@@ -34,12 +34,10 @@ def pp_caching_wrapper(raw_data,method='default'):
     return data
 
 
-
-
 class StandardPreprocessor(PreprocessJobs):
     def __init__(self):
         self.countries = ['Italy', 'DACH', 'Germany', 'Austria', 'Switzerland'] #which countries to consider
-
+        self.start_date = '2022-12-03'
     def fit(self, raw_data):
         pass
         
@@ -53,6 +51,8 @@ class StandardPreprocessor(PreprocessJobs):
         data = data[data.location.isin(self.countries)]
         # Format dates
         data['date'] = pd.to_datetime(data.date)
+        # Only keep dates of interest
+        data = data[data.date > self.start_date]
 
         # Many jobs do not have a date, but since they are scraped in chronological order this is a good approximation 
         # data['date'] = data.date\
