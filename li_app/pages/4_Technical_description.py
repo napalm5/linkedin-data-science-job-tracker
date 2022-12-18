@@ -5,13 +5,13 @@ st.sidebar.markdown("# Technical description")
 
 #Created from
 #https://www.figma.com/file/T62NQQ9W1aaHbzX2TABzyD/Tech-Stack-Diagram-(Copy)?node-id=0%3A1&t=j0W8735wdmMG6Pjh-0
-st.image('./li_app/assets/Tech_Stack_Diagram.png')
+st.image('./assets/Tech_Stack_Diagram.png')
 
 '''
 The architecture of this application is divided into two parts:
 
 ### Scraping
-The first is the scraping process, where a small scraping function is packaged with all its dependencies into a Docker container, it is deployed on AWS Lamda and scheduled for execution every day at 22:00 UTC+1 (my current timezone).
+The first is the scraping process, where a small scraping function is packaged with all its dependencies into a Docker container, it is deployed on AWS Lambda and scheduled for execution every day at 22:00 UTC+1 (my current timezone).
 The function scrapes all the jobs it can find for the current date, and saves an object containing the attributes of the job into a DynamoDB table.
 
 ### Computation and deployment
