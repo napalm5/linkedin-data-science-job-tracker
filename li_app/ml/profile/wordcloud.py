@@ -38,7 +38,7 @@ def train_ifidf_caching_wrapper(data: pd.DataFrame):
     return vectorizer
 
 @st.cache
-def create_wordcloud(data: pd.DataFrame):
+def create_wordcloud(data: pd.DataFrame, text_color="hsl(0,100%, 1%)"):
     '''
     Takes as input dataframe with raw jobs, outputs wordcloud image (and tf-idf matrix?)
 
@@ -55,12 +55,16 @@ def create_wordcloud(data: pd.DataFrame):
         background_color="white",
         width=1000, height=600,
     ).generate_from_frequencies(freqs_dict)
-    wordcloud.recolor(color_func = lambda **kwargs: "hsl(0,100%, 1%)" )
+
+    color_func = lambda *args, **kwargs: text_color
+    wordcloud.recolor(color_func = color_func)
     
     return wordcloud
 
+
+#TODO: add heuristic to choose number of clusters
 @st.cache
-def cluster_jobs(data: pd.DataFrame):
+def cluster_jobs(data: pd.DataFrame, n_clusters=5):
     ''' 
     Vectorize job titles/descriptions, 
 
@@ -88,7 +92,7 @@ def cluster_jobs(data: pd.DataFrame):
 
     # Cluster jobs
     # TODO: Select n_clusters based on some score, most probably silhouette score.
-    clusterer = KMeans(n_clusters=5)
+    clusterer = KMeans(n_clusters=n_clusters)
     clusterer.fit(cluster_data)
     labels = clusterer.predict(cluster_data)
     

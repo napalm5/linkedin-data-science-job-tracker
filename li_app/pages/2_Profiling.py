@@ -1,6 +1,7 @@
 import streamlit as st
 
 import matplotlib.pyplot as plt
+import matplotlib
 
 from ml import profile as p
 
@@ -9,7 +10,7 @@ st.sidebar.markdown("# Profiling")
 
 # Env variables
 data = st.session_state['data'] 
-
+n_clusters = 5
 
 # TODO: create classes instead of writing plot code here
 
@@ -43,11 +44,9 @@ st.pyplot(fig)
 Most of LinkedIn job titles are informative enough to characterize the entire jobs. This plot is the 2-D projection of a clustering analysis performed on all the jobs considered, based on the linguistic features of their titles.
 
 While the 2-D projection makes it difficult to visualize the separation between clusters, each cluster has its own distinctive properties. For example, one cluster might contain all the data engineering jobs, another one might contain all the management jobs, and so on.
-
-These can be observed by reproducing the cloud of words separately for each group of jobs. These cloud of words will be shown on this page very soon, come back later for updates!
 '''
 # Plot clustering of job posts
-viz_data = p.cluster_jobs(data)
+viz_data = p.cluster_jobs(data, n_clusters=n_clusters)
 fig, ax = plt.subplots()
 sc = ax.scatter(viz_data.x,viz_data.y,c=viz_data.label)
 lines, labels = sc.legend_elements()
@@ -58,4 +57,31 @@ ax.set_ylabel('PCA - Y')
 st.pyplot(fig)
 
 # Plot cloud of words separately for each cluster
-# TODO
+# TODO: rewrite this nicely
+'''
+Characterizing clusters is in general a tricky task. 
+
+You can get an idea about the properties of each job cluster by reproducing the cloud of words separately for each group. 
+
+Which cluster would you like to look into?
+'''
+
+chosen_cluster = st.selectbox(
+    '',
+    range(n_clusters),
+    label_visibility = 'collapsed'
+)
+main_keyword = ''
+
+#st.write('This cluster contains job of the ',main_keyword,' category')
+color = matplotlib.cm.get_cmap('viridis')((chosen_cluster)/(n_clusters-1))[:3]
+color = tuple([int(c*255) for c in color])
+
+cluster_wordcloud = p.create_wordcloud(
+    data = data[viz_data.set_index(data.index).label == chosen_cluster],
+    text_color = color)
+
+fig, ax = plt.subplots()
+plt.imshow(cluster_wordcloud, interpolation="bilinear")
+plt.axis("off")
+st.pyplot(fig)

@@ -28,6 +28,8 @@ st.session_state['ts'] = ts
 st.session_state['forecast_results'] = forecast_results
 
 
+# TODO: use streamlit-analytics to track visits to the app
+
 # Introduction page
 st.title('LinkedIn Job Postings for Data Science')
 st.sidebar.markdown("# Introduction")
@@ -65,7 +67,7 @@ st.pyplot(fig)
 '''
 # What's behind this?
 '''
-st.image('./li_app/assets/stack.png')
+st.image('./assets/stack.png')
 '''
 The data analysis process is described in the [Methodology](Methodology) section.
 
