@@ -5,7 +5,7 @@ st.sidebar.markdown("# Technical description")
 
 #Created from
 #https://www.figma.com/file/T62NQQ9W1aaHbzX2TABzyD/Tech-Stack-Diagram-(Copy)?node-id=0%3A1&t=j0W8735wdmMG6Pjh-0
-st.image('./assets/Tech_Stack_Diagram.png')
+st.image('./li_app/assets/Tech_Stack_Diagram.png')
 
 '''
 The architecture of this application is divided into two parts:

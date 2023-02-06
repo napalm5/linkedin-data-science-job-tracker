@@ -67,7 +67,7 @@ st.pyplot(fig)
 '''
 # What's behind this?
 '''
-st.image('./assets/stack.png')
+st.image('./li_app/assets/stack.png')
 '''
 The data analysis process is described in the [Methodology](Methodology) section.
 
